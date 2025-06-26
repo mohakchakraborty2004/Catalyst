@@ -2,8 +2,11 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Bot, TrendingUp } from "lucide-react";
+import { useTheme } from "./theme-context";
 
 const FeatureSection = () => {
+  const { theme } = useTheme();
+
   const features = [
     {
       icon: Users,
@@ -26,13 +29,17 @@ const FeatureSection = () => {
     <section className="py-24 px-6 relative">
       <div className="relative z-10 max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className={`text-4xl md:text-5xl font-bold mb-6 transition-colors duration-500 ${
+            theme === 'dark' ? 'text-white' : 'text-black'
+          }`}>
             Three Powerful Features,{" "}
             <span className="bg-gradient-to-r from-blue-400 via-purple-600 to-blue-900 bg-clip-text text-transparent">
               One Platform
             </span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className={`text-xl max-w-3xl mx-auto transition-colors duration-500 ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+          }`}>
             Catalyst combines proven market needs with cutting-edge technology to create 
             multiple revenue streams and exceptional user experiences.
           </p>
@@ -42,14 +49,37 @@ const FeatureSection = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className="bg-black/60 backdrop-blur-sm border-white/20 hover:bg-black/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl group"
+              className={`
+                backdrop-blur-sm border transition-all duration-500 hover:scale-105 hover:shadow-2xl group
+                ${theme === 'dark' 
+                  ? 'bg-black/60 border-white/20 hover:bg-black/80' 
+                  : 'bg-white/60 border-black/20 hover:bg-white/80'
+                }
+              `}
             >
               <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-white/20">
-                  <feature.icon className="w-8 h-8 text-white" />
+                <div className={`
+                  w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center 
+                  group-hover:scale-110 transition-all duration-300 border
+                  ${theme === 'dark' 
+                    ? 'bg-white/10 border-white/20' 
+                    : 'bg-black/10 border-black/20'
+                  }
+                `}>
+                  <feature.icon className={`w-8 h-8 transition-colors duration-500 ${
+                    theme === 'dark' ? 'text-white' : 'text-black'
+                  }`} />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{feature.description}</p>
+                <h3 className={`text-2xl font-bold mb-4 transition-colors duration-500 ${
+                  theme === 'dark' ? 'text-white' : 'text-black'
+                }`}>
+                  {feature.title}
+                </h3>
+                <p className={`leading-relaxed transition-colors duration-500 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  {feature.description}
+                </p>
               </CardContent>
             </Card>
           ))}
