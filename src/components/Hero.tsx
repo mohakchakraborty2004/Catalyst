@@ -25,7 +25,7 @@ const Hero = () => {
             <span className={`text-sm transition-colors duration-500 ${
               theme === 'dark' ? 'text-white' : 'text-black'
             }`}>
-              Next-Generation Community Platform
+              Next-Generation startup Platform
             </span>
           </div>
           
@@ -38,10 +38,10 @@ const Hero = () => {
             </span>
           </h1>
           
-          <p className={`text-xl md:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed transition-colors duration-500 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+          <p className={`text-lg md:text-xl mb-8 max-w-4xl mx-auto leading-relaxed transition-colors duration-500 ${
+            theme === 'dark' ? 'text-gray-300 font-bold' : 'text-black font-bold'
           }`}>
-            Revolutionizing how startup founders connect and communities self-govern through 
+            Revolutionizing how startup founders, builders and funders connect and communities self-govern through 
             innovative Web3 mechanics, AI-powered management, and gamified governance.
           </p>
           
@@ -56,7 +56,7 @@ const Hero = () => {
                 }
               `}
             >
-              Join the Community
+              Join Now
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
             
