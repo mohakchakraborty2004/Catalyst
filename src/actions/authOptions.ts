@@ -65,6 +65,11 @@ providers : [
 
 ], 
 secret : "secret",
+
+  pages: {
+    signIn: '/auth', 
+  },
+  
 callbacks : {
 
      async jwt({ token, user, account, profile }: any) {
