@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -25,4 +24,6 @@ model user {
   github   String?
   tags     String[] @default([])
   phone    Int?
+  country  String?
+  profilePic String? @default("")
 }

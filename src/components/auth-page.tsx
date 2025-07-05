@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Users, Target, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Users, Target, Zap, RefreshCw } from 'lucide-react';
 import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -7,6 +7,7 @@ export default function AuthPage() {
   const [isSignIn, setIsSignIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [profilePicture, setProfilePicture] = useState('');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -14,10 +15,72 @@ export default function AuthPage() {
   });
   const router = useRouter()
 
+  // Available DiceBear styles
+  const avatarStyles = [
+    'adventurer',
+    'avataaars',
+    'big-smile',
+    'bottts',
+    'croodles',
+    'fun-emoji',
+    'icons',
+    'identicon',
+    'initials',
+    'lorelei',
+    'micah',
+    'miniavs',
+    'open-peeps',
+    'personas',
+    'pixel-art',
+    'shapes',
+    'thumbs'
+  ];
+
+  const [selectedStyle, setSelectedStyle] = useState('adventurer');
+
+  // Generate profile picture URL
+  const generateProfilePicture = (username : string, style = selectedStyle) => {
+    if (!username) return '';
+    return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(username)}&backgroundColor=transparent`;
+  };
+
+  // Update profile picture when username changes
+  useEffect(() => {
+    if (formData.username && !isSignIn) {
+      setProfilePicture(generateProfilePicture(formData.username));
+    } else {
+      setProfilePicture('');
+    }
+  }, [formData.username, selectedStyle, isSignIn]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleStyleChange = (style : any) => {
+    setSelectedStyle(style);
+    if (formData.username) {
+      setProfilePicture(generateProfilePicture(formData.username, style));
+    }
+  };
+
+  const generateRandomUsername = () => {
+    const adjectives = ['Cool', 'Smart', 'Fast', 'Bright', 'Bold', 'Quick', 'Sharp', 'Swift'];
+    const nouns = ['Builder', 'Creator', 'Maker', 'Founder', 'Innovator', 'Visionary', 'Pioneer', 'Leader'];
+    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+    const randomNumber = Math.floor(Math.random() * 1000);
+    return `${randomAdjective}${randomNoun}${randomNumber}`;
+  };
+
+  const handleRandomUsername = () => {
+    const randomUsername = generateRandomUsername();
+    setFormData({
+      ...formData,
+      username: randomUsername
     });
   };
 
@@ -32,11 +95,12 @@ export default function AuthPage() {
         email,
         password,
         username : isSignIn ? '' : username,
+        profilePic: isSignIn ? '' : profilePicture, // Include profile picture URL
         redirect: false,
       });
 
       if (result?.error) {
-        alert("error");
+        console.log(result.error);
       } else if (result?.ok) {
         // Get the session to ensure user is authenticated
         const session = await getSession();
@@ -172,6 +236,25 @@ export default function AuthPage() {
               )}
             </div>
 
+            {/* Profile Picture Preview - Only show during sign up */}
+            {!isSignIn && profilePicture && (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative">
+                  <div className="w-24 h-24 bg-gray-800 rounded-full border-2 border-gray-600 overflow-hidden">
+                    <img 
+                      src={profilePicture} 
+                      alt="Profile Preview" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                    Preview
+                  </div>
+                </div>
+                <p className="text-sm text-gray-400">Your profile picture</p>
+              </div>
+            )}
+
             {/* Form */}
             <div className="space-y-6">
               {!isSignIn && (
@@ -186,11 +269,54 @@ export default function AuthPage() {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-white placeholder-gray-500"
+                      className="w-full pl-10 pr-16 py-3 bg-gray-900 border-2 border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none transition-colors text-white placeholder-gray-500"
                       placeholder="Choose a username"
                       required={!isSignIn}
                     />
+                    <button
+                      type="button"
+                      onClick={handleRandomUsername}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-400 transition-colors"
+                      title="Generate random username"
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                    </button>
                   </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Your profile picture will be generated based on your username
+                  </p>
+                </div>
+              )}
+
+              {/* Avatar Style Selector - Only show during sign up */}
+              {!isSignIn && formData.username && (
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Profile Picture Style
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {avatarStyles.map((style) => (
+                      <button
+                        key={style}
+                        type="button"
+                        onClick={() => handleStyleChange(style)}
+                        className={`p-2 rounded-lg border-2 transition-all ${
+                          selectedStyle === style
+                            ? 'border-blue-500 bg-blue-500/10'
+                            : 'border-gray-600 hover:border-gray-500'
+                        }`}
+                      >
+                        <img
+                          src={generateProfilePicture(formData.username, style)}
+                          alt={style}
+                          className="w-8 h-8 mx-auto rounded-full"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Click to preview different styles
+                  </p>
                 </div>
               )}
 

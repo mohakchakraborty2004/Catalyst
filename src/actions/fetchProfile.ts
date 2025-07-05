@@ -100,3 +100,33 @@ export async function makeUser(email : string) {
     }
   
 }
+
+export async function userProfile() {
+     const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+   
+    if(!userId){
+        return {
+            status : 400,
+            msg : "Unauthorized access"
+        }
+    }
+
+    const userData = await prisma.user.findUnique({
+        where : {
+            id : userId
+        }
+    })
+
+    if(userData){
+        return {
+            status : 200,
+            userData 
+        }
+    } else {
+        return {
+            status : 400,
+            msg : "No Such User"
+        }
+    }
+}
