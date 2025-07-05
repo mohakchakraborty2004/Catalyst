@@ -40,3 +40,12 @@ export async function GET(req : NextRequest) {
     return Response.json("internal server error")
   }
 }
+
+
+export async function POST(req: NextRequest) {
+    try {
+        const body = await req.json()
+    } catch (error) {
+        
+    }
+}
