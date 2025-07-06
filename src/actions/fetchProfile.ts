@@ -5,16 +5,14 @@ import authOptions from "./authOptions";
 import prisma from "@/db/db";
 
 
-export async function completeProfile(Xprofile : string, linkedinProfile: string, githubUsername: string, Tags: string[], phoneNumber : number) {
+export async function completeProfile(Xprofile : string, linkedinProfile: string, githubUsername: string, Tags: string[], phoneNumber : string, country: string) {
     const session =  await getServerSession(authOptions);
 
     const userId = session?.user?.id;
 
     if(!userId){
-        return {
-            status : 400,
-            msg : "Unauthorized access"
-        }
+        console.log("no user found");
+        return false;
     }
 
 
@@ -36,28 +34,21 @@ export async function completeProfile(Xprofile : string, linkedinProfile: string
                 linkedin : linkedinProfile,
                 github : githubUsername,
                 tags : Tags,
-                phone : phoneNumber
+                phone : phoneNumber,
+                country : country
             }
         })
 
         if (updateUserProfile) {
-            return {
-                status : 200,
-                msg : "Profile Updated, refresh to see changes"
-            }
+            return true;
         }
     } else {
-       return {
-            status : 400,
-            msg : "No Such User"
-        }
+        console.log("some error occured");
+       return false
     }
     } catch (error) {
         console.log(error);
-        return {
-            status : 500,
-            msg : "internal server error"
-        }
+        return false;
     }
 
 }

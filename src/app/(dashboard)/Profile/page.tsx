@@ -28,6 +28,7 @@ export default function ProfilePage() {
     github: '',
     phone: '',
     country: '',
+    xprofile : '',
     tags: [] as string[],
   });
 
@@ -54,6 +55,11 @@ export default function ProfilePage() {
     e.preventDefault();
     console.log('Saving profile...', form);
 
+    const update = await axios.post<{status : number, msg : string}>(`/api/fetchProfile`, form);
+
+    if (update.data.status == 200){
+      alert("profile updated");
+    }
     
     setShowModal(false);
     setRefresh(true)
@@ -167,9 +173,15 @@ export default function ProfilePage() {
                   onChange={handleChange}
                 />
                 <Input
-                  label="GitHub URL"
+                  label="GitHub username"
                   name="github"
                   value={form.github}
+                  onChange={handleChange}
+                />
+                <Input
+                  label="X username"
+                  name="xprofile"
+                  value={form.xprofile}
                   onChange={handleChange}
                 />
                 <Input
@@ -247,7 +259,13 @@ function InfoCard({ label, value }: { label: string; value: string | number | nu
   return (
     <div className="bg-black bg-opacity-20 rounded-xl p-4 border border-white border-opacity-10">
       <h3 className="text-sm font-semibold text-gray-300 mb-2">{label}</h3>
-      <p className="text-white">{value || 'Complete your profile'}</p>
+      {
+        label == "Twitter" ?
+       ( <a href={`https://x.com/${value}`}>
+       <p className="text-white">{value || 'Complete your profile'}</p>
+      </a> ) :   <p className="text-white">{value || 'Complete your profile'}</p>
+
+      }     
     </div>
   );
 }

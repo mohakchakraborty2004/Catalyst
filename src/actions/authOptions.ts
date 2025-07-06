@@ -3,8 +3,9 @@
 import * as bcrypt from "bcrypt";
 import prisma from "@/db/db";
 import  CredentialsProvider  from "next-auth/providers/credentials"
+import dotenv from "dotenv";
 
-
+dotenv.config();
 
 const authOptions = {
 providers : [
@@ -69,7 +70,7 @@ providers : [
 pages : {
     signIn : '/auth'
 },
-secret : "secret",
+secret : process.env.JWT_SECRET as string,
 callbacks : {
     async session({token, session}: any) {
         session.user.id = token.sub 

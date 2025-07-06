@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, X, Mail, Briefcase, DollarSign } from 'lucide-react';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const StartupListingPage = () => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(false);
@@ -9,52 +14,25 @@ const StartupListingPage = () => {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [showFundingModal, setShowFundingModal] = useState(false);
   const [applicationData, setApplicationData] = useState({ position: '', message: '' });
+  const [startups, setStartups] = useState<any[]>()
+  const URL = process.env.YNN_BACKEND_URL as string
+  const TOKEN = process.env.YNN_TOKEN as string
+  useEffect(()=> {
+    async function call() {
+      const fetch = await axios.get<any[]>(URL, {
+        headers : {
+          authorization : `Bearer ${TOKEN}`
+        }
+      })
 
-  // Sample startup data
-  const startups = [
-    {
-      id: 1,
-      name: "EcoTech Solutions",
-      founder: "sarah@ecotech.com",
-      description: "Revolutionary sustainable technology platform that helps businesses reduce their carbon footprint through AI-powered optimization.",
-      title: "Green Tech Innovation"
-    },
-    {
-      id: 2,
-      name: "HealthAI Connect",
-      founder: "john@healthai.com",
-      description: "AI-powered healthcare platform connecting patients with specialists through intelligent matching and telemedicine solutions.",
-      title: "Healthcare Technology"
-    },
-    {
-      id: 3,
-      name: "FinanceFlow",
-      founder: "mike@financeflow.com",
-      description: "Next-generation financial management platform for SMEs with automated bookkeeping and predictive analytics.",
-      title: "Fintech Solutions"
-    },
-    {
-      id: 4,
-      name: "EduVerse",
-      founder: "anna@eduverse.com",
-      description: "Immersive virtual reality learning platform that transforms education through interactive 3D experiences.",
-      title: "Education Technology"
-    },
-    {
-      id: 5,
-      name: "FoodTech Labs",
-      founder: "carlos@foodtech.com",
-      description: "Innovative food technology startup developing plant-based alternatives using precision fermentation.",
-      title: "Food Innovation"
-    },
-    {
-      id: 6,
-      name: "SmartCity IoT",
-      founder: "lisa@smartcity.com",
-      description: "IoT platform for smart city infrastructure management, optimizing traffic flow and energy consumption.",
-      title: "Urban Technology"
+      if(fetch){
+        setStartups(fetch.data)
+      }
     }
-  ];
+
+    call()
+  }, [])
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,9 +45,30 @@ const StartupListingPage = () => {
     setSelectedStartup(startup);
   };
 
-  const handleApplicationSubmit = () => {
+  const handleApplicationSubmit = async () => {
     // Handle application submission
+    // selectedstartup.title and selectedstartup.author
+
+    const data = {
+      position : applicationData.position,
+      message : applicationData.position,
+      title : selectedStartup.title,
+      author : selectedStartup.author
+    }
+
+    const post = await axios.post<{msg : string, status : number}>(`/api/apply`, data);
+
+    if(post.data.status == 200) {
+      alert(post.data.msg)
+    } else if(post.data.status == 404) {
+      alert(post.data.msg)
+      redirect('/auth')
+    } else {
+      alert(post.data.msg)
+    }
+
     console.log('Application submitted:', applicationData);
+
     setShowApplicationForm(false);
     setApplicationData({ position: '', message: '' });
     setSelectedStartup(null);
@@ -85,9 +84,9 @@ const StartupListingPage = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background Image - Replace with your image URL */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
         style={{
-          backgroundImage: `url('Kojiro.png')`
+          backgroundImage: `url('/Kojiro.png')`
         }}
       ></div>
       
@@ -127,7 +126,7 @@ const StartupListingPage = () => {
       <div className="relative z-10 px-4 pb-20">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {startups.map((startup, index) => (
+            {startups?.map((startup, index) => (
               <div
                 key={startup.id}
                 className={`bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl animate-fadeInUp`}
@@ -136,11 +135,17 @@ const StartupListingPage = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-white mb-2">{startup.name}</h3>
-                    <p className="text-gray-300 text-sm flex items-center gap-2">
+                    <h3 className="text-xl font-semibold text-white mb-2">{startup.title}</h3>
+                    <p className="text-gray-300 text-sm flex items-center gap-2 mb-2">
                       <Mail className="w-4 h-4" />
-                      {startup.founder}
+                      {startup.author}
                     </p>
+                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                      <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
+                        {startup.category}
+                      </span>
+                      <span>👍 {startup.votes}</span>
+                    </div>
                   </div>
                   <ChevronRight className="w-6 h-6 text-blue-400 transition-transform duration-300 hover:translate-x-1" />
                 </div>
@@ -156,8 +161,8 @@ const StartupListingPage = () => {
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full mx-4 animate-scaleIn">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900">{selectedStartup.name}</h3>
-                <p className="text-blue-600 font-medium">{selectedStartup.title}</p>
+                <h3 className="text-2xl font-bold text-gray-900">{selectedStartup.title}</h3>
+                <p className="text-blue-600 font-medium capitalize">{selectedStartup.category}</p>
               </div>
               <button
                 onClick={closeAllModals}
@@ -171,7 +176,10 @@ const StartupListingPage = () => {
             
             <div className="flex items-center gap-2 mb-8 text-gray-600">
               <Mail className="w-4 h-4" />
-              <span className="text-sm">{selectedStartup.founder}</span>
+              <span className="text-sm">{selectedStartup.author}</span>
+              <span className="text-xs text-gray-400 ml-auto">
+                👍 {selectedStartup.votes} votes
+              </span>
             </div>
             
             <div className="flex gap-4">
@@ -199,7 +207,7 @@ const StartupListingPage = () => {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 60 }}>
           <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full mx-4 animate-scaleIn">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">Apply to {selectedStartup?.name}</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Apply to {selectedStartup?.title}</h3>
               <button
                 onClick={() => setShowApplicationForm(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"

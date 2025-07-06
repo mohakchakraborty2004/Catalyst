@@ -23,7 +23,7 @@ model user {
   linkedin String?
   github   String?
   tags     String[] @default([])
-  phone    Int?
+  phone    String?
   country  String?
   profilePic String? @default("")
 }

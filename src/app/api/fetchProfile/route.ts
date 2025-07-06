@@ -1,4 +1,4 @@
-import { userProfile } from "@/actions/fetchProfile";
+import { completeProfile, userProfile } from "@/actions/fetchProfile";
 import { NextRequest, NextResponse } from "next/server";
 
 type dataType = {
@@ -13,7 +13,7 @@ type dataType = {
     linkedin: string | null;
     github: string | null;
     tags: string[];
-    phone: number | null;
+    phone: string | null;
     profilePic : string | null
     country : string | null
 } | undefined
@@ -43,9 +43,30 @@ export async function GET(req : NextRequest) {
 
 
 export async function POST(req: NextRequest) {
+  
     try {
         const body = await req.json()
-    } catch (error) {
+        const {linkedin, github, phone, country, xprofile, tags} = body
+
+        const update = await completeProfile(xprofile, linkedin, github, tags, phone, country);
+
+        if(update) {
+          return Response.json({
+            status : 200,
+            msg : "profile updated"
+          }) 
+        } else {
+         return Response.json({
+            status : 400,
+            msg : "some error"
+          })
+         }
         
+    } catch (error) {
+        console.log(error)
+       return Response.json({
+          status : 500,
+          msg : "internal server error"
+        }) 
     }
 }
