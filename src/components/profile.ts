@@ -14,7 +14,7 @@ type dataType = {
     linkedin: string | null;
     github: string | null;
     tags: string[];
-    phone: number | null;
+    phone: string | null;
     profilePic : string | null
     country : string | null
 } | undefined
@@ -27,7 +27,7 @@ export interface userData {
     linkedIn: string | null | undefined;
     github: string | null | undefined;
     tags: string[] | undefined;
-    phone: number | null | undefined;
+    phone: string | null | undefined;
     profilePic : string | undefined | null
     country : string | undefined | null
 }

@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, X, Mail, Briefcase, DollarSign } from 'lucide-react';
+import { ChevronRight, X, Mail, Briefcase, DollarSign, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import dotenv from "dotenv";
 
 dotenv.config();
+
+
 
 const StartupListingPage = () => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(false);
@@ -15,18 +17,29 @@ const StartupListingPage = () => {
   const [showFundingModal, setShowFundingModal] = useState(false);
   const [applicationData, setApplicationData] = useState({ position: '', message: '' });
   const [startups, setStartups] = useState<any[]>()
-  const URL = process.env.YNN_BACKEND_URL as string
-  const TOKEN = process.env.YNN_TOKEN as string
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  
   useEffect(()=> {
     async function call() {
-      const fetch = await axios.get<any[]>(URL, {
-        headers : {
-          authorization : `Bearer ${TOKEN}`
-        }
-      })
+      try {
+       const URL = process.env.NEXT_PUBLIC_YNN_BACKEND_URL!;
+       const TOKEN = process.env.NEXT_PUBLIC_TOKEN;
+        setIsLoading(true);
+        const fetch = await axios.get<any[]>(URL, {
+          headers : {
+            authorization : `Bearer ${TOKEN}`
+          }
+        })
 
-      if(fetch){
-        setStartups(fetch.data)
+        if(fetch){
+          setStartups(fetch.data)
+        }
+      } catch (error) {
+        console.error('Error fetching startups:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -48,30 +61,38 @@ const StartupListingPage = () => {
   const handleApplicationSubmit = async () => {
     // Handle application submission
     // selectedstartup.title and selectedstartup.author
+    try {
+      setIsSubmitting(true);
+      
+      const data = {
+        position : applicationData.position,
+        message : applicationData.position,
+        title : selectedStartup.title,
+        author : selectedStartup.author
+      }
 
-    const data = {
-      position : applicationData.position,
-      message : applicationData.position,
-      title : selectedStartup.title,
-      author : selectedStartup.author
+      const post = await axios.post<{msg : string, status : number}>(`/api/apply`, data);
+
+      if(post.data.status == 200) {
+        alert(post.data.msg)
+      } else if(post.data.status == 404) {
+        alert(post.data.msg)
+        redirect('/auth')
+      } else {
+        alert(post.data.msg)
+      }
+
+      console.log('Application submitted:', applicationData);
+
+      setShowApplicationForm(false);
+      setApplicationData({ position: '', message: '' });
+      setSelectedStartup(null);
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      alert('Error submitting application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const post = await axios.post<{msg : string, status : number}>(`/api/apply`, data);
-
-    if(post.data.status == 200) {
-      alert(post.data.msg)
-    } else if(post.data.status == 404) {
-      alert(post.data.msg)
-      redirect('/auth')
-    } else {
-      alert(post.data.msg)
-    }
-
-    console.log('Application submitted:', applicationData);
-
-    setShowApplicationForm(false);
-    setApplicationData({ position: '', message: '' });
-    setSelectedStartup(null);
   };
 
   const closeAllModals = () => {
@@ -79,6 +100,30 @@ const StartupListingPage = () => {
     setShowApplicationForm(false);
     setShowFundingModal(false);
   };
+
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[...Array(6)].map((_, index) => (
+        <div
+          key={index}
+          className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 animate-pulse"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="h-6 bg-white/20 rounded mb-2"></div>
+              <div className="h-4 bg-white/15 rounded mb-2 w-3/4"></div>
+              <div className="flex items-center gap-4">
+                <div className="h-6 bg-white/15 rounded-full w-20"></div>
+                <div className="h-4 bg-white/15 rounded w-16"></div>
+              </div>
+            </div>
+            <div className="w-6 h-6 bg-white/20 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
@@ -125,33 +170,37 @@ const StartupListingPage = () => {
       {/* Startups Grid */}
       <div className="relative z-10 px-4 pb-20">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {startups?.map((startup, index) => (
-              <div
-                key={startup.id}
-                className={`bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl animate-fadeInUp`}
-                style={{ animationDelay: `${index * 100}ms` }}
-                onClick={() => handleStartupClick(startup)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-white mb-2">{startup.title}</h3>
-                    <p className="text-gray-300 text-sm flex items-center gap-2 mb-2">
-                      <Mail className="w-4 h-4" />
-                      {startup.author}
-                    </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
-                      <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
-                        {startup.category}
-                      </span>
-                      <span>👍 {startup.votes}</span>
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {startups?.map((startup, index) => (
+                <div
+                  key={startup.id}
+                  className={`bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl animate-fadeInUp`}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                  onClick={() => handleStartupClick(startup)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-white mb-2">{startup.title}</h3>
+                      <p className="text-gray-300 text-sm flex items-center gap-2 mb-2">
+                        <Mail className="w-4 h-4" />
+                        {startup.author}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
+                          {startup.category}
+                        </span>
+                        <span>👍 {startup.votes}</span>
+                      </div>
                     </div>
+                    <ChevronRight className="w-6 h-6 text-blue-400 transition-transform duration-300 hover:translate-x-1" />
                   </div>
-                  <ChevronRight className="w-6 h-6 text-blue-400 transition-transform duration-300 hover:translate-x-1" />
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -211,6 +260,7 @@ const StartupListingPage = () => {
               <button
                 onClick={() => setShowApplicationForm(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={isSubmitting}
               >
                 <X className="w-6 h-6" />
               </button>
@@ -226,8 +276,9 @@ const StartupListingPage = () => {
                   id="position"
                   value={applicationData.position}
                   onChange={(e) => setApplicationData({...applicationData, position: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
                   placeholder="Enter desired position"
+                  disabled={isSubmitting}
                 />
               </div>
               
@@ -240,16 +291,25 @@ const StartupListingPage = () => {
                   value={applicationData.message}
                   onChange={(e) => setApplicationData({...applicationData, message: e.target.value})}
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:opacity-50"
                   placeholder="Tell us why you're interested..."
+                  disabled={isSubmitting}
                 />
               </div>
               
               <button
                 onClick={handleApplicationSubmit}
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors font-medium"
+                disabled={isSubmitting}
+                className="w-full bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Send Application
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  'Send Application'
+                )}
               </button>
             </div>
           </div>

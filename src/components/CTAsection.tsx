@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Briefcase } from "lucide-react";
 import { useTheme } from "./theme-context";
+import { redirect } from "next/navigation";
 
 const CTASection = () => {
   const { theme } = useTheme();
@@ -50,7 +51,7 @@ const CTASection = () => {
               <h3 className={`text-2xl font-bold transition-colors duration-500 ${
                 theme === 'dark' ? 'text-white' : 'text-black'
               }`}>
-                For Founders
+                For Builders and Funders
               </h3>
             </div>
             <p className={`mb-6 transition-colors duration-500 ${
@@ -66,7 +67,7 @@ const CTASection = () => {
                 : 'bg-black text-white hover:bg-gray-800'
               }
             `}>
-              Join as Founder
+              Join as Builder/Funder
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
@@ -102,14 +103,18 @@ const CTASection = () => {
               Participate in governance, invest in moderator performance, and help 
               shape the future of community management.
             </p>
-            <Button className={`
+            <Button
+            onClick={()=> {
+              redirect('/vortex')
+            }}
+            className={`
               w-full border-0 transition-all duration-300
               ${theme === 'dark' 
                 ? 'bg-white text-black hover:bg-gray-200' 
                 : 'bg-black text-white hover:bg-gray-800'
               }
             `}>
-              Join Community
+              Join Vortex
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
@@ -119,7 +124,7 @@ const CTASection = () => {
           <p className={`transition-colors duration-500 ${
             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
           }`}>
-            🌟 Be part of the community governance revolution • 🚀 Early access available
+            🌟 Be part of the community governance revolution • 🚀 Join the waitlist
           </p>
         </div>
       </div>

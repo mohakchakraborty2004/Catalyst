@@ -20,7 +20,7 @@ const FeatureSection = () => {
     },
     {
       icon: TrendingUp,
-      title: "Web3 Moderator Marketplace",
+      title: "Web3 Moderator Marketplace (Coming soon)",
       description: "Revolutionary prediction market where community members can invest in moderator performance like stocks."
     }
   ];

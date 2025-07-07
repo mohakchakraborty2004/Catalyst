@@ -47,7 +47,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className="relative pb-20"> {/* give padding bottom for dock spacing */}
+      <body className="relative"> {/* give padding bottom for dock spacing */}
         {children}
 
         {/* Dock fixed at bottom */}
