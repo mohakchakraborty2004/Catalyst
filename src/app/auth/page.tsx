@@ -1,19 +1,23 @@
 "use client";
 
 import AuthPage from "@/components/auth-page"
-import { getSession } from "next-auth/react"
-import { redirect } from "next/navigation"
+import {  useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 export default function Auth() {
+    const router = useRouter()
+   const { data: session, status } = useSession()
+
     useEffect(() => {
-        async function check() {
-            const check = await getSession()
-            if(check) {
-                redirect('/Profile');
-            }
-        }
-    }, [])
+        if (status === "loading") return // Still loading
+        
+        if (session) {
+            alert("active session");
+            router.push('/Profile')
+        } 
+        // If no session, stay on auth page
+    }, [session, status, router])
     return <div>
         <AuthPage></AuthPage>
     </div>
