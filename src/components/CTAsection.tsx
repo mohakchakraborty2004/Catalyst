@@ -57,9 +57,10 @@ const CTASection = () => {
             <p className={`mb-6 transition-colors duration-500 ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
             }`}>
-              Showcase your startup, connect with co-founders, and access a network of 
+              Showcase your skills, connect with founders, and access a network of 
               like-minded entrepreneurs building the future.
             </p>
+            <a href="/startups">
             <Button className={`
               w-full border-0 transition-all duration-300
               ${theme === 'dark' 
@@ -70,6 +71,7 @@ const CTASection = () => {
               Join as Builder/Funder
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
+            </a>
           </div>
           
           <div className={`

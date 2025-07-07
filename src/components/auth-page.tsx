@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Users, Target, Zap, RefreshCw } from 'lucide-react';
 import { getSession, signIn } from 'next-auth/react';
@@ -105,7 +107,7 @@ export default function AuthPage() {
         // Get the session to ensure user is authenticated
         const session = await getSession();
         if (session) {
-          router.push('/Profile');
+          router.push('/builders');
           router.refresh();
         }
       }

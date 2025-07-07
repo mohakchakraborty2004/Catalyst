@@ -127,7 +127,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-cover bg-center bg-no-repeat text-white bg-fixed overflow-auto"
-         style={{ backgroundImage: "url('https://wallpapercave.com/wp/wp12575664.jpg')" }}>
+         style={{ backgroundImage: "url('https://wallpapercave.com/wp/wp7607683.jpg')" }}>
       <div className="bg-black bg-opacity-60 min-h-screen">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Header with completion bar and button */}

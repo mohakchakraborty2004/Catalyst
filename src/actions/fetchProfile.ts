@@ -121,3 +121,31 @@ export async function userProfile() {
         }
     }
 }
+
+export async function userProfileById(userId : string) {
+  
+    if(!userId){
+        return {
+            status : 400,
+            msg : "Unauthorized access"
+        }
+    }
+
+    const userData = await prisma.user.findUnique({
+        where : {
+            id : userId
+        }
+    })
+
+    if(userData){
+        return {
+            status : 200,
+            userData 
+        }
+    } else {
+        return {
+            status : 400,
+            msg : "No Such User"
+        }
+    }
+}
