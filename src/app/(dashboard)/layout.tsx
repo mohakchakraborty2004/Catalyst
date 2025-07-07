@@ -29,9 +29,9 @@ export default function RootLayout({
       href: "/Profile",
     },
     {
-      title: "Vortex",
+      title: "Builders",
       icon: <IconUsers className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-      href: "/vortex",
+      href: "/builders",
     },
     {
       title: "Startups",

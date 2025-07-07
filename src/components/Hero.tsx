@@ -61,6 +61,7 @@ const Hero = () => {
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
             </a>
+            <a href="/about">
             <Button 
               size="lg" 
               variant="outline" 
@@ -74,6 +75,7 @@ const Hero = () => {
             >
               Learn More
             </Button>
+            </a>
           </div>
           
           <div className={`text-sm transition-colors duration-500 ${

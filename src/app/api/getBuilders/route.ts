@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
+import prisma from "@/db/db";
 
 export async function GET(req: NextRequest) {
     try {
-        const builders = await prisma?.user.findMany({
+        const builders = await prisma.user.findMany({
             select : {
                 id : true,
                 username : true,

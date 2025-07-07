@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { Home, Zap, BarChart3, Users, Mail, Menu, X } from "lucide-react";
+import { Home, Zap, BarChart3, Users, Mail, Menu, X, User2 } from "lucide-react";
 import CTASection from "@/components/CTAsection";
 import FeatureSection from "@/components/featureSection";
 import Hero from "@/components/Hero";
@@ -26,8 +26,8 @@ const Navbar = () => {
   const navItems = [
     { icon: Home, label: 'Home', href: '#home' },
     { icon: Zap, label: 'Features', href: '#features' },
-    { icon: BarChart3, label: 'Stats', href: '#stats' },
-    { icon: Users, label: 'About', href: '#about' },
+    { icon: Users, label: 'Builders', href: '/builders' },
+    { icon: BarChart3, label: 'Startups', href: '/startups' },
     { icon: Mail, label: 'Contact', href: '#contact' },
   ];
 
