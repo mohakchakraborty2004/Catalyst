@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db" : "cd src/db && npx prisma generate"
+    "db" : "cd src/db && npx prisma generate && cd ../../"
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",

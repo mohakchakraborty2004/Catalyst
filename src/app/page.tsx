@@ -67,7 +67,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-3 min-w-0">
               <img 
                 className="h-8 w-auto object-contain flex-shrink-0"
-                src="/catalystLogo.png" 
+                src="/catalystlogo.png" 
                 alt="Catalyst Logo" 
               />
             

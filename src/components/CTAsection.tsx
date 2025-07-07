@@ -103,10 +103,8 @@ const CTASection = () => {
               Participate in governance, invest in moderator performance, and help 
               shape the future of community management.
             </p>
+            <a href="/vortex">
             <Button
-            onClick={()=> {
-              redirect('/vortex')
-            }}
             className={`
               w-full border-0 transition-all duration-300
               ${theme === 'dark' 
@@ -117,6 +115,7 @@ const CTASection = () => {
               Join Vortex
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
+            </a>
           </div>
         </div>
         
