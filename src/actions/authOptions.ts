@@ -1,6 +1,6 @@
 // next auth 
 
-import * as bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs'
 import prisma from "@/db/db";
 import  CredentialsProvider  from "next-auth/providers/credentials"
 import dotenv from "dotenv";
