@@ -6,6 +6,7 @@ import {  useProfile, userData } from '@/components/profile';
 import GitHubCalendar from 'react-github-calendar';
 import { Loader2 } from 'lucide-react';
 import axios from 'axios';
+import { signOut } from 'next-auth/react';
 
 export default function ProfilePage() {
   const [showModal, setShowModal] = useState(false);
@@ -142,6 +143,17 @@ export default function ProfilePage() {
               </div>
             </div>
 
+          <div className='flex gap-3'>
+                <button 
+            onClick={()=> {
+              signOut({
+           callbackUrl: '/auth' 
+            })
+            }}
+            className='bg-red-500 text-white font-semibold p-2 rounded-xl'>
+              Logout
+            </button>
+
             <button
               onClick={() => setShowModal(true)}
               disabled={isLoading}
@@ -149,6 +161,8 @@ export default function ProfilePage() {
             >
               {isLoading ? 'Loading...' : 'Complete Your Profile'}
             </button>
+          </div>
+          
           </div>
 
           {/* Profile Card */}

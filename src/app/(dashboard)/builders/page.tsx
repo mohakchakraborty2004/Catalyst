@@ -74,7 +74,7 @@ const BuildersPage = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background with gradient overlay */}
       <div 
-        className="absolute inset-0  bg-cover bg-center bg-no-repeat opacity-70"
+        className="absolute inset-0 bg-fixed  bg-cover bg-center bg-no-repeat opacity-70"
         style={{
           backgroundImage: `url('/gnulinux.png')`
         }}
