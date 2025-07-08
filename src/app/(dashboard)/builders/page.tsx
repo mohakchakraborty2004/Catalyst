@@ -24,9 +24,6 @@ const BuildersPage = () => {
   }, [])
 
   const handleProfileClick = (id : any) => {
-    alert("hello")
-    // In a real application, this would navigate to the profile page
-    //  redirect(`/Profile/${id}`);
     window.location.href = `/Profile/${id}`;
   };
 

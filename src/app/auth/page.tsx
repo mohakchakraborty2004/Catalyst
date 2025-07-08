@@ -13,7 +13,6 @@ export default function Auth() {
         if (status === "loading") return // Still loading
         
         if (session) {
-            alert("active session");
             router.push('/Profile')
         } 
         // If no session, stay on auth page

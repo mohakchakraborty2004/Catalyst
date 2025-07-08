@@ -81,9 +81,6 @@ const StartupListingPage = () => {
       } else {
         alert(post.data.msg)
       }
-
-      console.log('Application submitted:', applicationData);
-
       setShowApplicationForm(false);
       setApplicationData({ position: '', message: '' });
       setSelectedStartup(null);
