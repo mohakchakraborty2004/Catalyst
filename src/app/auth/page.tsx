@@ -10,9 +10,11 @@ export default function Auth() {
    const { data: session, status } = useSession()
 
     useEffect(() => {
+        console.log('[Auth] Session status changed', { status, authenticated: Boolean(session) })
         if (status === "loading") return // Still loading
         
         if (session) {
+            console.log('[Auth] Authenticated user detected; redirecting to profile')
             router.push('/Profile')
         } 
         // If no session, stay on auth page

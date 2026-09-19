@@ -26,6 +26,7 @@ const StartupListingPage = () => {
       try {
        const URL = process.env.NEXT_PUBLIC_YNN_BACKEND_URL!;
        const TOKEN = process.env.NEXT_PUBLIC_TOKEN;
+        console.log('[Startups] Fetching startup listings');
         setIsLoading(true);
         const fetch = await axios.get<any[]>(URL, {
           headers : {
@@ -34,6 +35,7 @@ const StartupListingPage = () => {
         })
 
         if(fetch){
+          console.log(`[Startups] Loaded ${fetch.data.length} startup listings`);
           setStartups(fetch.data)
         }
       } catch (error) {
@@ -55,6 +57,7 @@ const StartupListingPage = () => {
   }, []);
 
   const handleStartupClick = (startup : any) => {
+    console.log('[Startups] Selected startup', { title: startup.title });
     setSelectedStartup(startup);
   };
 
@@ -63,6 +66,10 @@ const StartupListingPage = () => {
     // selectedstartup.title and selectedstartup.author
     try {
       setIsSubmitting(true);
+      console.log('[Startups] Submitting application', {
+        startup: selectedStartup.title,
+        position: applicationData.position
+      });
       
       const data = {
         position : applicationData.position,
@@ -74,6 +81,7 @@ const StartupListingPage = () => {
       const post = await axios.post<{msg : string, status : number}>(`/api/apply`, data);
 
       if(post.data.status == 200) {
+        console.log('[Startups] Application submitted successfully');
         alert(post.data.msg)
       } else if(post.data.status == 404) {
         alert(post.data.msg)

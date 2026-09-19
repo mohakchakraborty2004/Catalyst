@@ -63,6 +63,7 @@ export default function AuthPage() {
   };
 
   const handleStyleChange = (style : any) => {
+    console.log('[AuthForm] Avatar style selected', { style });
     setSelectedStyle(style);
     if (formData.username) {
       setProfilePicture(generateProfilePicture(formData.username, style));
@@ -80,6 +81,7 @@ export default function AuthPage() {
 
   const handleRandomUsername = () => {
     const randomUsername = generateRandomUsername();
+    console.log('[AuthForm] Generated a random username');
     setFormData({
       ...formData,
       username: randomUsername
@@ -89,6 +91,7 @@ export default function AuthPage() {
  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log('[AuthForm] Submitting credentials', { mode: isSignIn ? 'sign-in' : 'sign-up' });
     const email = formData.email
     const password = formData.password
     const username = formData.username
@@ -102,17 +105,19 @@ export default function AuthPage() {
       });
 
       if (result?.error) {
-        console.log(result.error);
+        console.error('[AuthForm] Authentication failed', result.error);
       } else if (result?.ok) {
+        console.log('[AuthForm] Authentication succeeded; checking session');
         // Get the session to ensure user is authenticated
         const session = await getSession();
         if (session) {
+          console.log('[AuthForm] Session confirmed; redirecting to builders');
           router.push('/builders');
           router.refresh();
         }
       }
     } catch (error) {
-       console.log("error occured");
+       console.error('[AuthForm] Unexpected authentication error', error);
     } finally {
       setLoading(false);
     }
