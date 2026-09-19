@@ -16,7 +16,9 @@ export default function Auth() {
         if (session) {
             console.log('[Auth] Authenticated user detected; redirecting to profile')
             router.push('/Profile')
-        } 
+        } else {
+            console.log('[Auth] No active session; displaying authentication form')
+        }
         // If no session, stay on auth page
     }, [session, status, router])
     return <div>
