@@ -10,20 +10,33 @@ const BuildersPage = () => {
 
   useEffect(()=> {
     async function call(){
-        const builders = await axios.get<{status : number, msg: string, builders : any[]}>('/api/getBuilders');
-        if(builders.data.builders) {
-            setBuilders(builders.data.builders);
-        } else {
-            alert(builders.data.msg)
+        console.log('[Builders] Fetching builder profiles');
+        const startedAt = performance.now();
+        try {
+          const builders = await axios.get<{status : number, msg: string, builders : any[]}>('/api/getBuilders');
+          if(builders.data.builders) {
+              console.log(`[Builders] Loaded ${builders.data.builders.length} builder profiles`);
+              console.debug('[Builders] Fetch completed', {
+                durationMs: Math.round(performance.now() - startedAt)
+              });
+              setBuilders(builders.data.builders);
+          } else {
+              console.warn('[Builders] API returned no builder profiles', builders.data.msg);
+              alert(builders.data.msg)
+          }
+        } catch (error) {
+          console.error('[Builders] Failed to fetch builder profiles', {
+            durationMs: Math.round(performance.now() - startedAt),
+            error
+          });
         }
-        
-      
     }
 
     call()
   }, [])
 
   const handleProfileClick = (id : any) => {
+    console.log('[Builders] Opening builder profile', { id });
     window.location.href = `/Profile/${id}`;
   };
 

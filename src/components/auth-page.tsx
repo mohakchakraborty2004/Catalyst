@@ -63,6 +63,7 @@ export default function AuthPage() {
   };
 
   const handleStyleChange = (style : any) => {
+    console.log('[AuthForm] Avatar style selected', { style });
     setSelectedStyle(style);
     if (formData.username) {
       setProfilePicture(generateProfilePicture(formData.username, style));
@@ -80,15 +81,29 @@ export default function AuthPage() {
 
   const handleRandomUsername = () => {
     const randomUsername = generateRandomUsername();
+    console.log('[AuthForm] Generated a random username');
     setFormData({
       ...formData,
       username: randomUsername
     });
   };
 
+  const handleAuthModeChange = (signingIn: boolean) => {
+    console.log('[AuthForm] Authentication mode changed', {
+      mode: signingIn ? 'sign-in' : 'sign-up'
+    });
+    setIsSignIn(signingIn);
+  };
+
+  const handlePasswordVisibility = () => {
+    console.log('[AuthForm] Password visibility toggled', { visible: !showPassword });
+    setShowPassword(!showPassword);
+  };
+
  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log('[AuthForm] Submitting credentials', { mode: isSignIn ? 'sign-in' : 'sign-up' });
     const email = formData.email
     const password = formData.password
     const username = formData.username
@@ -102,17 +117,19 @@ export default function AuthPage() {
       });
 
       if (result?.error) {
-        console.log(result.error);
+        console.error('[AuthForm] Authentication failed', result.error);
       } else if (result?.ok) {
+        console.log('[AuthForm] Authentication succeeded; checking session');
         // Get the session to ensure user is authenticated
         const session = await getSession();
         if (session) {
+          console.log('[AuthForm] Session confirmed; redirecting to builders');
           router.push('/builders');
           router.refresh();
         }
       }
     } catch (error) {
-       console.log("error occured");
+       console.error('[AuthForm] Unexpected authentication error', error);
     } finally {
       setLoading(false);
     }
@@ -218,7 +235,7 @@ export default function AuthPage() {
                 <p className="text-sm text-gray-500 mt-2">
                   Already have an account? 
                   <button
-                    onClick={() => setIsSignIn(true)}
+                    onClick={() => handleAuthModeChange(true)}
                     className="text-blue-500 hover:text-blue-400 font-medium ml-1 transition-colors"
                   >
                     Sign in
@@ -229,7 +246,7 @@ export default function AuthPage() {
                 <p className="text-sm text-gray-500 mt-2">
                   Don't have an account? 
                   <button
-                    onClick={() => setIsSignIn(false)}
+                    onClick={() => handleAuthModeChange(false)}
                     className="text-blue-500 hover:text-blue-400 font-medium ml-1 transition-colors"
                   >
                     Sign up
@@ -357,7 +374,7 @@ export default function AuthPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={handlePasswordVisibility}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
