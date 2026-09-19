@@ -88,6 +88,18 @@ export default function AuthPage() {
     });
   };
 
+  const handleAuthModeChange = (signingIn: boolean) => {
+    console.log('[AuthForm] Authentication mode changed', {
+      mode: signingIn ? 'sign-in' : 'sign-up'
+    });
+    setIsSignIn(signingIn);
+  };
+
+  const handlePasswordVisibility = () => {
+    console.log('[AuthForm] Password visibility toggled', { visible: !showPassword });
+    setShowPassword(!showPassword);
+  };
+
  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -223,7 +235,7 @@ export default function AuthPage() {
                 <p className="text-sm text-gray-500 mt-2">
                   Already have an account? 
                   <button
-                    onClick={() => setIsSignIn(true)}
+                    onClick={() => handleAuthModeChange(true)}
                     className="text-blue-500 hover:text-blue-400 font-medium ml-1 transition-colors"
                   >
                     Sign in
@@ -234,7 +246,7 @@ export default function AuthPage() {
                 <p className="text-sm text-gray-500 mt-2">
                   Don't have an account? 
                   <button
-                    onClick={() => setIsSignIn(false)}
+                    onClick={() => handleAuthModeChange(false)}
                     className="text-blue-500 hover:text-blue-400 font-medium ml-1 transition-colors"
                   >
                     Sign up
@@ -362,7 +374,7 @@ export default function AuthPage() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={handlePasswordVisibility}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

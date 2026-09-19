@@ -41,6 +41,7 @@ const StartupListingPage = () => {
       } catch (error) {
         console.error('Error fetching startups:', error);
       } finally {
+        console.debug('[Startups] Startup request finished');
         setIsLoading(false);
       }
     }
@@ -79,6 +80,7 @@ const StartupListingPage = () => {
       }
 
       const post = await axios.post<{msg : string, status : number}>(`/api/apply`, data);
+      console.debug('[Startups] Application API response received', { status: post.data.status });
 
       if(post.data.status == 200) {
         console.log('[Startups] Application submitted successfully');
@@ -101,6 +103,7 @@ const StartupListingPage = () => {
   };
 
   const closeAllModals = () => {
+    console.log('[Startups] Closing startup dialogs');
     setSelectedStartup(null);
     setShowApplicationForm(false);
     setShowFundingModal(false);
